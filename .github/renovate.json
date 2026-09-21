@@ -1,0 +1,40 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "timezone": "Europe/Brussels",
+  "schedule": ["* 0-5 * * 1"],
+  "labels": ["dependencies"],
+  "minimumReleaseAge": "3 days",
+  "extends": ["config:recommended"],
+  "packageRules": [
+    {
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
+      "groupName": "all non-major dependencies",
+      "matchPackageNames": ["*"],
+      "commitMessagePrefix": "ci:",
+      "commitMessageAction": "update",
+      "commitMessageTopic": "all non-major dependencies"
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "groupName": "all major dependencies",
+      "enabled": false,
+      "matchPackageNames": ["*"]
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Keep the Terraform version used by the workflows in sync with required_version",
+      "managerFilePatterns": ["/^\\.github/workflows/.+\\.yml$/"],
+      "matchStrings": ["TERRAFORM_VERSION: (?<currentValue>\\S+)"],
+      "depNameTemplate": "hashicorp/terraform",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v(?<version>.*)$"
+    }
+  ]
+}
